@@ -16,10 +16,10 @@ function RepoManager() {
 
     try {
       // Call the backend to check if the webhook exists
-      const response = await axios.post('https://9e59b599494667379235d6a2c56cb07b.serveo.net/check-webhook', {
+      const response = await axios.post('https://github-pr-review-backend.onrender.com/check-webhook', {
         repoOwner,
         repoName,
-        webhookUrl: 'https://9e59b599494667379235d6a2c56cb07b.serveo.net/webhook',
+        webhookUrl: 'https://github-pr-review-backend.onrender.com/webhook',
       });
     
       const { webhookExists } = response.data;
@@ -46,7 +46,7 @@ function RepoManager() {
           active: true,
           events: ['pull_request'],
           config: {
-            url: 'https://9e59b599494667379235d6a2c56cb07b.serveo.net/webhook',
+            url: 'https://github-pr-review-backend.onrender.com/webhook',
             content_type: 'json',
             insecure_ssl: '0'
           }

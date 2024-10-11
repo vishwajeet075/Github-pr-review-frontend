@@ -10,7 +10,7 @@ function Callback() {
 
       if (code) {
         try {
-          const response = await axios.post('https://9e59b599494667379235d6a2c56cb07b.serveo.net/github-oauth', { code },
+          const response = await axios.post('https://github-pr-review-backend.onrender.com/github-oauth', { code },
             { 
               withCredentials: true,
               headers: {
