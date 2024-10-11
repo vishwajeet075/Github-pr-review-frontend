@@ -6,14 +6,38 @@ function RepoManager() {
   const [repoName, setRepoName] = useState('');
   const [error, setError] = useState('');
 
-  const createWebhook = async () => {
-    const token = localStorage.getItem('github_token');
-    
+  const token = localStorage.getItem('github_token');
+
+  const checkAndCreateWebhook = async () => {
     if (!token) {
       setError('No GitHub token found. Please authenticate first.');
       return;
     }
 
+    try {
+      // Call the backend to check if the webhook exists
+      const response = await axios.post('https://9e59b599494667379235d6a2c56cb07b.serveo.net/check-webhook', {
+        repoOwner,
+        repoName,
+        webhookUrl: 'https://9e59b599494667379235d6a2c56cb07b.serveo.net/webhook',
+      });
+    
+      const { webhookExists } = response.data;
+    
+      if (webhookExists) {
+        alert('Webhook already exists.');
+      } else {
+        // If webhook doesn't exist, create it
+        await createWebhook();
+      }
+    } catch (error) {
+      console.error('Error checking existing webhooks:', error.response ? error.response.data : error);
+      setError(`Error checking webhooks: ${error.message}`);
+    }
+    
+  };
+
+  const createWebhook = async () => {
     try {
       const response = await axios.post(
         `https://api.github.com/repos/${repoOwner}/${repoName}/hooks`,
@@ -22,7 +46,7 @@ function RepoManager() {
           active: true,
           events: ['pull_request'],
           config: {
-            url: 'https://7413-106-210-176-67.ngrok-free.app/webhook', // Replace with your actual webhook URL
+            url: 'https://9e59b599494667379235d6a2c56cb07b.serveo.net/webhook',
             content_type: 'json',
             insecure_ssl: '0'
           }
@@ -45,7 +69,7 @@ function RepoManager() {
   return (
     <div>
       <h2>Manage Repository Webhook</h2>
-      {error && <p style={{color: 'red'}}>{error}</p>}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
       <input 
         type="text" 
         placeholder="Repository Owner" 
@@ -58,7 +82,7 @@ function RepoManager() {
         value={repoName} 
         onChange={(e) => setRepoName(e.target.value)} 
       />
-      <button onClick={createWebhook}>Create Webhook</button>
+      <button onClick={checkAndCreateWebhook}>Create Webhook</button>
     </div>
   );
 }

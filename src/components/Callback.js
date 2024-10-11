@@ -10,7 +10,13 @@ function Callback() {
 
       if (code) {
         try {
-          const response = await axios.post('http://localhost:5050/github-oauth', { code });
+          const response = await axios.post('https://9e59b599494667379235d6a2c56cb07b.serveo.net/github-oauth', { code },
+            { 
+              withCredentials: true,
+              headers: {
+                'Content-Type': 'application/json',
+              }
+            });
           const { access_token } = response.data;
 
           localStorage.setItem('github_token', access_token);
