@@ -13,28 +13,29 @@ function RepoManager() {
       setError('No GitHub token found. Please authenticate first.');
       return;
     }
-
+  
     try {
-      // Call the backend to check if the webhook exists
       const response = await axios.post('https://github-pr-review-backend.onrender.com/check-webhook', {
         repoOwner,
         repoName,
         webhookUrl: 'https://github-pr-review-backend.onrender.com/webhook',
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
       });
-    
+  
       const { webhookExists } = response.data;
-    
+  
       if (webhookExists) {
         alert('Webhook already exists.');
       } else {
-        // If webhook doesn't exist, create it
         await createWebhook();
       }
     } catch (error) {
       console.error('Error checking existing webhooks:', error.response ? error.response.data : error);
       setError(`Error checking webhooks: ${error.message}`);
     }
-    
   };
 
   const createWebhook = async () => {
