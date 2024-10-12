@@ -30,11 +30,9 @@ function RepoManager() {
 
   const createWebhook = async () => {
     try {
-      const response = await axios.post(`${BACKEND_URL}/create-webhook`, {
+      await axios.post(`${BACKEND_URL}/create-webhook`, {
         repoOwner,
         repoName
-      }, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('github_token')}` }
       });
       alert('Webhook created successfully!');
     } catch (error) {
@@ -42,7 +40,7 @@ function RepoManager() {
       setError(`Error creating webhook: ${error.response?.data?.error || error.message}`);
     }
   };
-
+  
   return (
     <div>
       <h2>Manage Repository Webhook</h2>
