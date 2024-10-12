@@ -15,7 +15,7 @@ function RepoManager() {
     }
   
     try {
-      const response = await axios.post('https://github-pr-review-backend.onrender.com/check-webhook', {
+      /*const response = await axios.post('https://github-pr-review-backend.onrender.com/check-webhook', {
         repoOwner,
         repoName,
         webhookUrl: 'https://github-pr-review-backend.onrender.com/webhook',
@@ -31,7 +31,8 @@ function RepoManager() {
         alert('Webhook already exists.');
       } else {
         await createWebhook();
-      }
+      }*/
+     await createWebhook();
     } catch (error) {
       console.error('Error checking existing webhooks:', error.response ? error.response.data : error);
       setError(`Error checking webhooks: ${error.message}`);
