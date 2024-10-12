@@ -1,4 +1,3 @@
-// src/components/Callback.js
 import React, { useEffect } from 'react';
 import axios from 'axios';
 
@@ -10,15 +9,14 @@ function Callback() {
 
       if (code) {
         try {
-          const response = await axios.post('https://github-pr-review-backend.onrender.com/github-oauth', { code },
-            { 
-              withCredentials: true,
-              headers: {
-                'Content-Type': 'application/json',
-              }
-            });
+          const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/github-oauth`, { code }, {
+            withCredentials: true,
+            headers: { 'Content-Type': 'application/json' }
+          });
+          
           const { access_token } = response.data;
 
+          // Save the token to local storage and redirect
           localStorage.setItem('github_token', access_token);
           window.location.href = '/';
         } catch (error) {
