@@ -1,34 +1,57 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { CircularProgress, Typography, Paper, Box } from '@mui/material';
 
 function Callback() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
   useEffect(() => {
-    const fetchToken = async () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
+    const urlParams = new URLSearchParams(window.location.search);
+    const code = urlParams.get('code');
 
-      if (code) {
-        try {
-          const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/github-oauth`, { code }, {
-            withCredentials: true,
-            headers: { 'Content-Type': 'application/json' }
-          });
-          
-          const { access_token } = response.data;
+    if (code) {
+      axios.post('https://github-pr-review-backend.onrender.com/github-oauth', { code })
+        .then(response => {
+          if (response.data.success) {
+            navigate('/dashboard');
+          } else {
+            setError('Failed to authenticate with GitHub');
+          }
+        })
+        .catch(err => {
+          setError('An error occurred during authentication');
+          console.error(err);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      setError('No code found in the callback URL');
+      setLoading(false);
+    }
+  }, [navigate]);
 
-          // Save the token to local storage and redirect
-          localStorage.setItem('github_token', access_token);
-          window.location.href = '/';
-        } catch (error) {
-          console.error('Error fetching token:', error);
-        }
-      }
-    };
-
-    fetchToken();
-  }, []);
-
-  return <div>Processing GitHub login...</div>;
+  return (
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <Paper elevation={3} sx={{ padding: '2rem', maxWidth: 600, textAlign: 'center' }}>
+        {loading ? (
+          <>
+            <CircularProgress />
+            <Typography variant="h6" sx={{ marginTop: '1rem' }}>
+              Authenticating with GitHub...
+            </Typography>
+          </>
+        ) : error ? (
+          <Typography variant="h6" color="error">
+            {error}
+          </Typography>
+        ) : null}
+      </Paper>
+    </Box>
+  );
 }
 
 export default Callback;

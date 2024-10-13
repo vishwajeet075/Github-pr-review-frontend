@@ -1,26 +1,39 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Button, Typography, Paper, Box } from '@mui/material';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 function Home() {
-  const githubToken = localStorage.getItem('github_token');
-
-  const handleLogin = () => {
-    window.location.href = `https://github.com/login/oauth/authorize?client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&scope=repo,admin:repo_hook`;
+  const handleConnect = () => {
+    const clientId = process.env.REACT_APP_GITHUB_CLIENT_ID;
+    const redirectUri = `${window.location.origin}/callback`;
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}`;
   };
 
   return (
-    <div>
-      <h1>GitHub PR Review</h1>
-      {!githubToken ? (
-        <button onClick={handleLogin}>Connect to GitHub</button>
-      ) : (
-        <>
-          <Link to="/manage-repo">
-            <button>Manage Repository Webhook</button>
-          </Link>
-        </>
-      )}
-    </div>
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <Paper elevation={3} sx={{ padding: '2rem', maxWidth: 600, textAlign: 'center' }}>
+        <Typography variant="h4" gutterBottom>
+          GitHub PR Review System
+        </Typography>
+        <Typography variant="body1" sx={{ marginBottom: '2rem' }}>
+          Connect your GitHub account to start automatically reviewing pull requests using AI.
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<GitHubIcon />}
+          onClick={handleConnect}
+          sx={{
+            '&:hover': {
+              transform: 'scale(1.05)',
+              transition: 'transform 0.2s',
+            },
+          }}
+        >
+          Connect GitHub
+        </Button>
+      </Paper>
+    </Box>
   );
 }
 
